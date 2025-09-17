@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cek Area Kuota AKRAB XL</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #e0f2ff, #f9faff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #0047ab;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    #searchInput {
+      width: 100%;
+      max-width: 500px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      border: 2px solid #0077ff;
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    #searchInput:focus {
+      border-color: #0051ba;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    #results {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    .nama {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #003d99;
+    }
+    .info {
+      font-size: 0.95rem;
+      color: #555;
+      margin-top: 4px;
+    }
+    #groupSection {
+      max-width: 500px;
+      margin: 30px auto 0;
+      background: #0077ff;
+      color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    #groupSection h3 { margin: 0 0 8px; }
+    #groupSection a {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 10px 20px;
+      background: #fff;
+      color: #0077ff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    #groupSection a:hover {
+      background: #0051ba;
+      color: #fff;
+    }
+    footer {
+      margin-top: auto;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>CEK AREA KUOTA AKRAB XL/AXIS</h1>
+  <input type="text" id="searchInput" placeholder="Cari kabupaten/kota..." onkeyup="cekArea()" />
+
+  <div id="results">Masukkan nama kabupaten/kota untuk cek area.</div>
+
+  <!-- Grup WhatsApp -->
+  <div id="groupSection">
+    <h3>SALURAN</h3>
+    <p>Jangan Lupa Join SALURAN <strong>LAPAK DIN</strong> untuk mendapatkan kuoa xl / axis murah dan 100% aman tentunya 🤗🤗</p>
+    <a href="https://whatsapp.com/channel/0029Vaz4J9rHLHQaCsN2NN0O"
+       target="_blank" rel="noopener noreferrer">
+       Gabung Grup WhatsApp
+    </a>
+  </div>
+
+  <footer>Copyright © 2025 - DINN STORE</footer>
+
+  <script>const areaMap = {
+  // ================== BANTEN ==================
+  "Kota Tangerang Selatan": {prov: "Banten", area: "Area 2"},
+  "Kota Tangerang": {prov: "Banten", area: "Area 2"},
+  "Kab. Tangerang": {prov: "Banten", area: "Area 2"},
+  "Kab. Pandeglang": {prov: "Banten", area: "Area 2"},
+  "Kab. Lebak": {prov: "Banten", area: "Area 2"},
+  "Kab. Serang": {prov: "Banten", area: "Area 2"},
+  "Kota Serang": {prov: "Banten", area: "Area 2"},
+  "Kota Cilegon": {prov: "Banten", area: "Area 2"},
+
+  // ================== DKI JAKARTA ==================
+  "Kota Jakarta Pusat": {prov: "DKI Jakarta", area: "Area 2"},
+  "Kota Jakarta Selatan": {prov: "DKI Jakarta", area: "Area 2"},
+  "Kota Jakarta Barat": {prov: "DKI Jakarta", area: "Area 2"},
+  "Kota Jakarta Timur": {prov: "DKI Jakarta", area: "Area 2"},
+  "Kota Jakarta Utara": {prov: "DKI Jakarta", area: "Area 2"},
+  "Kab. Kepulauan Seribu": {prov: "DKI Jakarta", area: "Area 3"},
+
+  // ================== DI YOGYAKARTA ==================
+  "Kab. Kulon Progo": {prov: "DI Yogyakarta", area: "Area 1"},
+  "Kota Yogyakarta": {prov: "DI Yogyakarta", area: "Area 1"},
+  "Kab. Sleman": {prov: "DI Yogyakarta", area: "Area 1"},
+  "Kab. Bantul": {prov: "DI Yogyakarta", area: "Area 1"},
+  "Kab. Gunungkidul": {prov: "DI Yogyakarta", area: "Area 1"},
+
+  // ================== JAWA BARAT ==================
+  "Kab. Bandung": {prov: "Jawa Barat", area: "Area 1"},
+  "Kab. Kuningan": {prov: "Jawa Barat", area: "Area 1"},
+  "Kab. Purwakarta": {prov: "Jawa Barat", area: "Area 1"},
+  "Kota Bandung": {prov: "Jawa Barat", area: "Area 1"},
+
+  "Kab. Bandung Barat": {prov: "Jawa Barat", area: "Area 2"},
+  "Kota Cimahi": {prov: "Jawa Barat", area: "Area 2"},
+  "Kab. Cirebon": {prov: "Jawa Barat", area: "Area 2"},
+  "Kota Cirebon": {prov: "Jawa Barat", area: "Area 2"},
+  "Kab. Indramayu": {prov: "Jawa Barat", area: "Area 2"},
+  "Kab. Subang": {prov: "Jawa Barat", area: "Area 2"},
+
+  "Kab. Bogor": {prov: "Jawa Barat", area: "Area 3"},
+  "Kota Bogor": {prov: "Jawa Barat", area: "Area 3"},
+  "Kota Depok": {prov: "Jawa Barat", area: "Area 3"},
+  "Kota Bekasi": {prov: "Jawa Barat", area: "Area 3"},
+  "Kab. Bekasi": {prov: "Jawa Barat", area: "Area 3"},
+  "Kota Banjar": {prov: "Jawa Barat", area: "Area 3"},
+  "Kab. Ciamis": {prov: "Jawa Barat", area: "Area 3"},
+  "Kab. Tasikmalaya": {prov: "Jawa Barat", area: "Area 3"},
+  "Kota Tasikmalaya": {prov: "Jawa Barat", area: "Area 3"},
+  "Kab. Majalengka": {prov: "Jawa Barat", area: "Area 3"},
+  "Kab. Sumedang": {prov: "Jawa Barat", area: "Area 3"},
+  "Kab. Garut": {prov: "Jawa Barat", area: "Area 3"},
+
+  "Kab. Cianjur": {prov: "Jawa Barat", area: "Area 4"},
+  "Kab. Pangandaran": {prov: "Jawa Barat", area: "Area 4"},
+  "Kab. Karawang": {prov: "Jawa Barat", area: "Area 4"},
+  "Kota Sukabumi": {prov: "Jawa Barat", area: "Area 4"},
+  "Kab. Sukabumi": {prov: "Jawa Barat", area: "Area 4"},
+
+  // ================== JAWA TENGAH ==================
+  "Kab. Tegal": {prov: "Jawa Tengah", area: "Area 2"},
+  "Kota Surakarta": {prov: "Jawa Tengah", area: "Area 2"},
+  "Kota Tegal": {prov: "Jawa Tengah", area: "Area 2"},
+  "Kab. Brebes": {prov: "Jawa Tengah", area: "Area 2"},
+  "Kab. Kebumen": {prov: "Jawa Tengah", area: "Area 2"},
+  "Kab. Pemalang": {prov: "Jawa Tengah", area: "Area 2"},
+  "Kota Semarang": {prov: "Jawa Tengah", area: "Area 2"},
+
+  "Kab. Boyolali": {prov: "Jawa Tengah", area: "Area 3"},
+  "Kota Salatiga": {prov: "Jawa Tengah", area: "Area 3"},
+  "Kab. Semarang": {prov: "Jawa Tengah", area: "Area 3"},
+  "Kab. Cilacap": {prov: "Jawa Tengah", area: "Area 3"},
+  "Kab. Grobogan": {prov: "Jawa Tengah", area: "Area 3"},
+  "Kab. Kendal": {prov: "Jawa Tengah", area: "Area 3"},
+  "Kab. Rembang": {prov: "Jawa Tengah", area: "Area 3"},
+
+  "Kota Pekalongan": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Pekalongan": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Batang": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Purbalingga": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Kudus": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Sukoharjo": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Klaten": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kota Magelang": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Banyumas": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Magelang": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Temanggung": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Sragen": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Banjarnegara": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Karanganyar": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Wonosobo": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Jepara": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Demak": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Purworejo": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Blora": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Wonogiri": {prov: "Jawa Tengah", area: "Area 4"},
+  "Kab. Pati": {prov: "Jawa Tengah", area: "Area 4"},
+
+  // ================== JAWA TIMUR ==================
+  "Kota Probolinggo": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Bangkalan": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Sidoarjo": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Banyuwangi": {prov: "Jawa Timur", area: "Area 2"},
+  "Kota Surabaya": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Sampang": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Pamekasan": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Sumenep": {prov: "Jawa Timur", area: "Area 2"},
+  "Kab. Pacitan": {prov: "Jawa Timur", area: "Area 2"},
+
+  "Kab. Lumajang": {prov: "Jawa Timur", area: "Area 3"},
+  "Kab. Probolinggo": {prov: "Jawa Timur", area: "Area 3"},
+
+  "Kab. Jombang": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Blitar": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Blitar": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Kediri": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Lamongan": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Kediri": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Ngawi": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Mojokerto": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Mojokerto": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Magetan": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Gresik": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Tulungagung": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Nganjuk": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Pasuruan": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Pasuruan": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Bojonegoro": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Madiun": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Bondowoso": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Tuban": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Madiun": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Situbondo": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Jember": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Malang": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Malang": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Ponorogo": {prov: "Jawa Timur", area: "Area 4"},
+  "Kota Batu": {prov: "Jawa Timur", area: "Area 4"},
+  "Kab. Trenggalek": {prov: "Jawa Timur", area: "Area 4"},
+  // ================== ACEH ==================
+"Kab. Aceh Barat Daya": {prov: "Nanggroe Aceh Darussalam", area: "Area 2"},
+"Kab. Aceh Besar": {prov: "Nanggroe Aceh Darussalam", area: "Area 2"},
+"Kota Sabang": {prov: "Nanggroe Aceh Darussalam", area: "Area 2"},
+"Kab. Gayo Lues": {prov: "Nanggroe Aceh Darussalam", area: "Area 2"},
+
+"Kab. Aceh Jaya": {prov: "Nanggroe Aceh Darussalam", area: "Area 3"},
+"Kab. Aceh Selatan": {prov: "Nanggroe Aceh Darussalam", area: "Area 3"},
+"Kab. Aceh Tenggara": {prov: "Nanggroe Aceh Darussalam", area: "Area 3"},
+"Kab. Nagan Raya": {prov: "Nanggroe Aceh Darussalam", area: "Area 3"},
+"Kota Banda Aceh": {prov: "Nanggroe Aceh Darussalam", area: "Area 3"},
+
+"Kab. Aceh Barat": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Aceh Singkil": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Aceh Tamiang": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Aceh Tengah": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kota Subulussalam": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Bener Meriah": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Aceh Utara": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kota Lhokseumawe": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Pidie": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Aceh Timur": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Simeulue": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kota Langsa": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Bireuen": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+"Kab. Pidie Jaya": {prov: "Nanggroe Aceh Darussalam", area: "Area 4"},
+
+// ================== SUMATERA UTARA ==================
+"Kab. Karo": {prov: "Sumatera Utara", area: "Area 2"},
+"Kota Medan": {prov: "Sumatera Utara", area: "Area 2"},
+"Kab. Dairi": {prov: "Sumatera Utara", area: "Area 2"},
+
+"Kota Binjai": {prov: "Sumatera Utara", area: "Area 3"},
+"Kota Tebing Tinggi": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Serdang Bedagai": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Langkat": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Deli Serdang": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Batu Bara": {prov: "Sumatera Utara", area: "Area 3"},
+"Kota Tanjung Balai": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Asahan": {prov: "Sumatera Utara", area: "Area 3"},
+"Kota Gunungsitoli": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Nias Barat": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Nias Selatan": {prov: "Sumatera Utara", area: "Area 3"},
+"Kab. Nias Utara": {prov: "Sumatera Utara", area: "Area 3"},
+
+"Kab. Pakpak Bharat": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Mandailing Natal": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Padang Lawas": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Labuhanbatu Utara": {prov: "Sumatera Utara", area: "Area 4"},
+"Kota Padangsidimpuan": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Tapanuli Selatan": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Labuhanbatu Selatan": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Labuhanbatu": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Tapanuli Utara": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Padang Lawas Utara": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Humbang Hasundutan": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Simalungun": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Toba Samosir": {prov: "Sumatera Utara", area: "Area 4"},
+"Kota Pematangsiantar": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Tapanuli Tengah": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Samosir": {prov: "Sumatera Utara", area: "Area 4"},
+"Kota Sibolga": {prov: "Sumatera Utara", area: "Area 4"},
+"Kab. Nias": {prov: "Sumatera Utara", area: "Area 4"},
+
+// ================== SUMATERA BARAT ==================
+"Kab. Kepulauan Mentawai": {prov: "Sumatera Barat", area: "Area 2"},
+
+"Kota Payakumbuh": {prov: "Sumatera Barat", area: "Area 3"},
+"Kota Padang Panjang": {prov: "Sumatera Barat", area: "Area 3"},
+"Kab. Sijunjung": {prov: "Sumatera Barat", area: "Area 3"},
+"Kab. Padang Pariaman": {prov: "Sumatera Barat", area: "Area 3"},
+"Kota Padang": {prov: "Sumatera Barat", area: "Area 3"},
+"Kab. Solok Selatan": {prov: "Sumatera Barat", area: "Area 3"},
+
+"Kab. Pasaman Barat": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Pasaman": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Lima Puluh Kota": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Tanah Datar": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Dharmasraya": {prov: "Sumatera Barat", area: "Area 4"},
+"Kota Solok": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Agam": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Solok": {prov: "Sumatera Barat", area: "Area 4"},
+"Kota Bukittinggi": {prov: "Sumatera Barat", area: "Area 4"},
+"Kota Pariaman": {prov: "Sumatera Barat", area: "Area 4"},
+"Kota Sawahlunto": {prov: "Sumatera Barat", area: "Area 4"},
+"Kab. Pesisir Selatan": {prov: "Sumatera Barat", area: "Area 4"},
+
+// ================== RIAU ==================
+"Kota Pekanbaru": {prov: "Riau", area: "Area 2"},
+
+"Kab. Kuantan Singingi": {prov: "Riau", area: "Area 3"},
+"Kab. Pelalawan": {prov: "Riau", area: "Area 3"},
+"Kab. Kampar": {prov: "Riau", area: "Area 3"},
+"Kab. Siak": {prov: "Riau", area: "Area 3"},
+"Kota Dumai": {prov: "Riau", area: "Area 3"},
+"Kab. Rokan Hilir": {prov: "Riau", area: "Area 3"},
+"Kab. Indragiri Hulu": {prov: "Riau", area: "Area 3"},
+"Kab. Kepulauan Meranti": {prov: "Riau", area: "Area 3"},
+"Kab. Bengkalis": {prov: "Riau", area: "Area 3"},
+
+"Kab. Rokan Hulu": {prov: "Riau", area: "Area 4"},
+"Kab. Indragiri Hilir": {prov: "Riau", area: "Area 4"},
+
+// ================== KEPULAUAN RIAU ==================
+"Kota Batam": {prov: "Kepulauan Riau", area: "Area 2"},
+
+"Kab. Karimun": {prov: "Kepulauan Riau", area: "Area 3"},
+"Kab. Bintan": {prov: "Kepulauan Riau", area: "Area 3"},
+"Kota Tanjung Pinang": {prov: "Kepulauan Riau", area: "Area 3"},
+
+"Kab. Lingga": {prov: "Kepulauan Riau", area: "Area 4"},
+"Kab. Kepulauan Anambas": {prov: "Kepulauan Riau", area: "Area 4"},
+"Kab. Natuna": {prov: "Kepulauan Riau", area: "Area 4"},
+
+// ================== JAMBI ==================
+"Kab. Batanghari": {prov: "Jambi", area: "Area 3"},
+"Kota Jambi": {prov: "Jambi", area: "Area 3"},
+"Kab. Tanjung Jabung Barat": {prov: "Jambi", area: "Area 3"},
+"Kab. Muaro Jambi": {prov: "Jambi", area: "Area 3"},
+"Kab. Sarolangun": {prov: "Jambi", area: "Area 3"},
+
+"Kab. Tanjung Jabung Timur": {prov: "Jambi", area: "Area 4"},
+"Kab. Kerinci": {prov: "Jambi", area: "Area 4"},
+"Kab. Bungo": {prov: "Jambi", area: "Area 4"},
+"Kab. Tebo": {prov: "Jambi", area: "Area 4"},
+"Kab. Merangin": {prov: "Jambi", area: "Area 4"},
+"Kota Sungai Penuh": {prov: "Jambi", area: "Area 4"},
+
+// ================== BENGKULU ==================
+"Kab. Seluma": {prov: "Bengkulu", area: "Area 3"},
+
+"Kab. Bengkulu Selatan": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Kaur": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Lebong": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Rejang Lebong": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Bengkulu Tengah": {prov: "Bengkulu", area: "Area 4"},
+"Kota Bengkulu": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Bengkulu Utara": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Kepahiang": {prov: "Bengkulu", area: "Area 4"},
+"Kab. Muko Muko": {prov: "Bengkulu", area: "Area 4"},
+
+// ================== SUMATERA SELATAN ==================
+"Kab. Ogan Komering Ilir": {prov: "Sumatera Selatan", area: "Area 3"},
+"Kab. Penukal Abab Lematang Ilir": {prov: "Sumatera Selatan", area: "Area 3"},
+"Kab. Banyuasin": {prov: "Sumatera Selatan", area: "Area 3"},
+"Kota Palembang": {prov: "Sumatera Selatan", area: "Area 3"},
+"Kab. Ogan Ilir": {prov: "Sumatera Selatan", area: "Area 3"},
+
+"Kab. Ogan Komering Ulu Timur": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Ogan Komering Ulu Selatan": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Ogan Komering Ulu": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Musi Rawas": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Musi Rawas Utara": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Empat Lawang": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kota Pagar Alam": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kota Lubuk Linggau": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Musi Banyuasin": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Muara Enim": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kab. Lahat": {prov: "Sumatera Selatan", area: "Area 4"},
+"Kota Prabumulih": {prov: "Sumatera Selatan", area: "Area 4"},
+
+// ================== LAMPUNG ==================
+"Kab. Lampung Tengah": {prov: "Lampung", area: "Area 3"},
+"Kab. Pringsewu": {prov: "Lampung", area: "Area 3"},
+"Kota Metro": {prov: "Lampung", area: "Area 3"},
+"Kab. Pesawaran": {prov: "Lampung", area: "Area 3"},
+"Kab. Lampung Selatan": {prov: "Lampung", area: "Area 3"},
+"Kota Bandar Lampung": {prov: "Lampung", area: "Area 3"},
+
+"Kab. Lampung Barat": {prov: "Lampung", area: "Area 4"},
+"Kab. Lampung Timur": {prov: "Lampung", area: "Area 4"},
+"Kab. Tulang Bawang Barat": {prov: "Lampung", area: "Area 4"},
+"Kab. Way Kanan": {prov: "Lampung", area: "Area 4"},
+"Kab. Tulang Bawang": {prov: "Lampung", area: "Area 4"},
+"Kab. Tanggamus": {prov: "Lampung", area: "Area 4"},
+"Kab. Pesisir Barat": {prov: "Lampung", area: "Area 4"},
+"Kab. Lampung Utara": {prov: "Lampung", area: "Area 4"},
+"Kab. Mesuji": {prov: "Lampung", area: "Area 4"},
+
+// ================== KEP. BANGKA BELITUNG ==================
+"Kab. Bangka Selatan": {prov: "Kepulauan Bangka Belitung", area: "Area 2"},
+"Kota Pangkal Pinang": {prov: "Kepulauan Bangka Belitung", area: "Area 2"},
+"Kab. Belitung": {prov: "Kepulauan Bangka Belitung", area: "Area 2"},
+"Kab. Belitung Timur": {prov: "Kepulauan Bangka Belitung", area: "Area 2"},
+
+"Kab. Bangka": {prov: "Kepulauan Bangka Belitung", area: "Area 3"},
+"Kab. Bangka Tengah": {prov: "Kepulauan Bangka Belitung", area: "Area 3"},
+"Kab. Bangka Barat": {prov: "Kepulauan Bangka Belitung", area: "Area 3"},
+// ================== KALIMANTAN BARAT ==================
+"Kab. Sekadau": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Kapuas Hulu": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Sintang": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Bengkayang": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Melawi": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Sambas": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Sanggau": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Kubu Raya": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kota Pontianak": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Kayong Utara": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Landak": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Mempawah": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kota Singkawang": {prov: "Kalimantan Barat", area: "Area 4"},
+"Kab. Ketapang": {prov: "Kalimantan Barat", area: "Area 4"},
+
+// ================== KALIMANTAN SELATAN ==================
+"Kab. Hulu Sungai Tengah": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kab. Tapin": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kab. Hulu Sungai Utara": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kab. Tabalong": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kota Banjarmasin": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kab. Banjar": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kab. Tanah Bumbu": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kota Banjarbaru": {prov: "Kalimantan Selatan", area: "Area 2"},
+"Kab. Hulu Sungai Selatan": {prov: "Kalimantan Selatan", area: "Area 2"},
+
+"Kab. Balangan": {prov: "Kalimantan Selatan", area: "Area 3"},
+"Kab. Barito Kuala": {prov: "Kalimantan Selatan", area: "Area 3"},
+"Kab. Tanah Laut": {prov: "Kalimantan Selatan", area: "Area 3"},
+"Kab. Kotabaru": {prov: "Kalimantan Selatan", area: "Area 3"},
+
+// ================== KALIMANTAN TENGAH ==================
+"Kab. Kapuas": {prov: "Kalimantan Tengah", area: "Area 3"},
+"Kab. Pulang Pisau": {prov: "Kalimantan Tengah", area: "Area 3"},
+"Kota Palangkaraya": {prov: "Kalimantan Tengah", area: "Area 3"},
+
+"Kab. Seruyan": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Kotawaringin Barat": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Katingan": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Kotawaringin Timur": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Sukamara": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Lamandau": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Murung Raya": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Barito Timur": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Barito Utara": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Barito Selatan": {prov: "Kalimantan Tengah", area: "Area 4"},
+"Kab. Gunung Mas": {prov: "Kalimantan Tengah", area: "Area 4"},
+
+// ================== KALIMANTAN TIMUR ==================
+"Kab. Penajam Paser Utara": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kota Balikpapan": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kab. Paser": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kab. Kutai Kartanegara": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kota Samarinda": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kota Bontang": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kab. Berau": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kab. Kutai Timur": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kab. Kutai Barat": {prov: "Kalimantan Timur", area: "Area 4"},
+"Kab. Mahakam Ulu": {prov: "Kalimantan Timur", area: "Area 4"},
+
+// ================== KALIMANTAN UTARA ==================
+"Kab. Tana Tidung": {prov: "Kalimantan Utara", area: "Area 4"},
+"Kab. Malinau": {prov: "Kalimantan Utara", area: "Area 4"},
+"Kab. Bulungan": {prov: "Kalimantan Utara", area: "Area 4"},
+"Kota Tarakan": {prov: "Kalimantan Utara", area: "Area 4"},
+"Kab. Nunukan": {prov: "Kalimantan Utara", area: "Area 4"},
+// ================== GORONTALO ==================
+"Kab. Pahuwato": {prov: "Gorontalo", area: "Area 4"},
+"Kab. Boalemo": {prov: "Gorontalo", area: "Area 4"},
+"Kab. Gorontalo": {prov: "Gorontalo", area: "Area 4"},
+"Kota Gorontalo": {prov: "Gorontalo", area: "Area 4"},
+"Kab. Gorontalo Utara": {prov: "Gorontalo", area: "Area 4"},
+"Kab. Bone Bolango": {prov: "Gorontalo", area: "Area 4"},
+
+// ================== SULAWESI BARAT ==================
+"Kab. Mamuju Tengah": {prov: "Sulawesi Barat", area: "Area 2"},
+
+"Kab. Majene": {prov: "Sulawesi Barat", area: "Area 3"},
+"Kab. Polewali Mandar": {prov: "Sulawesi Barat", area: "Area 3"},
+"Kab. Mamuju Utara": {prov: "Sulawesi Barat", area: "Area 3"},
+
+"Kab. Mamuju": {prov: "Sulawesi Barat", area: "Area 4"},
+"Kab. Mamasa": {prov: "Sulawesi Barat", area: "Area 4"},
+
+// ================== SULAWESI SELATAN ==================
+"Kab. Barru": {prov: "Sulawesi Selatan", area: "Area 2"},
+"Kota Pare Pare": {prov: "Sulawesi Selatan", area: "Area 2"},
+"Kab. Pinrang": {prov: "Sulawesi Selatan", area: "Area 2"},
+
+"Kab. Sinjai": {prov: "Sulawesi Selatan", area: "Area 3"},
+"Kab. Enrekang": {prov: "Sulawesi Selatan", area: "Area 3"},
+"Kab. Sidenreng Rappang": {prov: "Sulawesi Selatan", area: "Area 3"},
+"Kab. Luwu Timur": {prov: "Sulawesi Selatan", area: "Area 3"},
+"Kab. Soppeng": {prov: "Sulawesi Selatan", area: "Area 3"},
+"Kab. Tana Toraja": {prov: "Sulawesi Selatan", area: "Area 3"},
+
+"Kab. Kepulauan Selayar": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Takalar": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Jeneponto": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Bulukumba": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Pangkajene Kepulauan": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kota Makassar": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Gowa": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Maros": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Bone": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Wajo": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Luwu": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Luwu Utara": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kota Palopo": {prov: "Sulawesi Selatan", area: "Area 4"},
+"Kab. Toraja Utara": {prov: "Sulawesi Selatan", area: "Area 4"},
+
+// ================== SULAWESI TENGAH ==================
+"Kab. Banggai Kepulauan": {prov: "Sulawesi Tengah", area: "Area 3"},
+"Kab. Banggai Laut": {prov: "Sulawesi Tengah", area: "Area 3"},
+"Kota Palu": {prov: "Sulawesi Tengah", area: "Area 3"},
+"Kab. Toli Toli": {prov: "Sulawesi Tengah", area: "Area 3"},
+"Kab. Tojo Una Una": {prov: "Sulawesi Tengah", area: "Area 3"},
+"Kab. Morowali": {prov: "Sulawesi Tengah", area: "Area 3"},
+"Kab. Morowali Utara": {prov: "Sulawesi Tengah", area: "Area 3"},
+
+"Kab. Banggai": {prov: "Sulawesi Tengah", area: "Area 4"},
+"Kab. Parigi Moutong": {prov: "Sulawesi Tengah", area: "Area 4"},
+"Kab. Donggala": {prov: "Sulawesi Tengah", area: "Area 4"},
+"Kab. Sigi": {prov: "Sulawesi Tengah", area: "Area 4"},
+"Kab. Poso": {prov: "Sulawesi Tengah", area: "Area 4"},
+"Kab. Buol": {prov: "Sulawesi Tengah", area: "Area 4"},
+
+// ================== SULAWESI TENGGARA ==================
+"Kab. Konawe Kepulauan": {prov: "Sulawesi Tenggara", area: "Area 2"},
+"Kab. Konawe Utara": {prov: "Sulawesi Tenggara", area: "Area 2"},
+"Kab. Buton Utara": {prov: "Sulawesi Tenggara", area: "Area 2"},
+"Kab. Wakatobi": {prov: "Sulawesi Tenggara", area: "Area 2"},
+
+"Kota Bau Bau": {prov: "Sulawesi Tenggara", area: "Area 3"},
+"Kab. Muna": {prov: "Sulawesi Tenggara", area: "Area 3"},
+"Kab. Buton Selatan": {prov: "Sulawesi Tenggara", area: "Area 3"},
+"Kab. Buton Tengah": {prov: "Sulawesi Tenggara", area: "Area 3"},
+"Kab. Muna Barat": {prov: "Sulawesi Tenggara", area: "Area 3"},
+
+"Kab. Kolaka": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kab. Kolaka Utara": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kab. Konawe": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kab. Konawe Selatan": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kota Kendari": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kab. Kolaka Timur": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kab. Buton": {prov: "Sulawesi Tenggara", area: "Area 4"},
+"Kab. Bombana": {prov: "Sulawesi Tenggara", area: "Area 4"},
+
+// ================== SULAWESI UTARA ==================
+"Kab. Bolaang Mongondow": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Bolaang Mongondow Selatan": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kota Kotamobagu": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Minahasa Selatan": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Bolaang Mongondow Timur": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Minahasa Tenggara": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Bolaang Mongondow Utara": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kota Tomohon": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Minahasa": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kota Manado": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Minahasa Utara": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kota Bitung": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Kepulauan Sangihe": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Kepulauan Talaud": {prov: "Sulawesi Utara", area: "Area 4"},
+"Kab. Siau Tagulandang Biaro": {prov: "Sulawesi Utara", area: "Area 4"},
+// ================== BALI ==================
+"Kab. Jembrana": {prov: "Bali", area: "Area 1"},
+"Kab. Buleleng": {prov: "Bali", area: "Area 1"},
+"Kab. Badung": {prov: "Bali", area: "Area 2"},
+"Kab. Karangasem": {prov: "Bali", area: "Area 2"},
+"Kab. Tabanan": {prov: "Bali", area: "Area 2"},
+"Kab. Bangli": {prov: "Bali", area: "Area 2"},
+"Kab. Gianyar": {prov: "Bali", area: "Area 2"},
+"Kab. Klungkung": {prov: "Bali", area: "Area 2"},
+"Kota Denpasar": {prov: "Bali", area: "Area 2"},
+
+// ================== NUSA TENGGARA BARAT ==================
+"Kab. Lombok Barat": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Lombok Timur": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kota Mataram": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Lombok Tengah": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Lombok Utara": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Sumbawa Barat": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Sumbawa": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kota Bima": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Dompu": {prov: "Nusa Tenggara Barat", area: "Area 2"},
+"Kab. Bima": {prov: "Nusa Tenggara Barat", area: "Area 4"},
+
+// ================== NUSA TENGGARA TIMUR ==================
+"Kab. Alor": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kota Kupang": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Kupang": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Malaka": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Manggarai Barat": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Timor Tengah Selatan": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Belu": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Sikka": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Timor Tengah Utara": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Lembata": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Manggarai Timur": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Ende": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Sumba Barat Daya": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Rote Ndao": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Nagekeo": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Flores Timur": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Ngada": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Sumba Tengah": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Manggarai": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Sumba Barat": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Sumba Timur": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+"Kab. Sabu Raijua": {prov: "Nusa Tenggara Timur", area: "Area 4"},
+
+// ================== MALUKU ==================
+"Kab. Maluku Tenggara Barat": {prov: "Maluku", area: "Area 1"},
+"Kab. Kepulauan Aru": {prov: "Maluku", area: "Area 1"},
+"Kota Tual": {prov: "Maluku", area: "Area 1"},
+"Kab. Seram Bagian Barat": {prov: "Maluku", area: "Area 1"},
+"Kab. Maluku Tengah": {prov: "Maluku", area: "Area 1"},
+"Kab. Seram Bagian Timur": {prov: "Maluku", area: "Area 1"},
+"Kota Ambon": {prov: "Maluku", area: "Area 1"},
+"Kab. Maluku Tenggara": {prov: "Maluku", area: "Area 1"},
+"Kab. Maluku Barat Daya": {prov: "Maluku", area: "Area 1"},
+"Kab. Buru Selatan": {prov: "Maluku", area: "Area 1"},
+"Kab. Buru": {prov: "Maluku", area: "Area 1"},
+
+// ================== MALUKU UTARA ==================
+"Kab. Halmahera Barat": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Halmahera Utara": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Kepulauan Sula": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Halmahera Timur": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Pulau Taliabu": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Halmahera Selatan": {prov: "Maluku Utara", area: "Area 1"},
+"Kota Tidore Kepulauan": {prov: "Maluku Utara", area: "Area 1"},
+"Kota Ternate": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Halmahera Tengah": {prov: "Maluku Utara", area: "Area 1"},
+"Kab. Pulau Morotai": {prov: "Maluku Utara", area: "Area 1"},
+
+// ================== PAPUA ==================
+"Kab. Asmat": {prov: "Papua", area: "Area 1"},
+"Kab. Jayapura": {prov: "Papua", area: "Area 1"},
+"Kab. Mimika": {prov: "Papua", area: "Area 1"},
+"Kab. Keerom": {prov: "Papua", area: "Area 1"},
+"Kab. Biak Numfor": {prov: "Papua", area: "Area 1"},
+"Kota Jayapura": {prov: "Papua", area: "Area 1"},
+"Kab. Kepulauan Yapen": {prov: "Papua", area: "Area 1"},
+"Kab. Boven Digoel": {prov: "Papua", area: "Area 1"},
+"Kab. Merauke": {prov: "Papua", area: "Area 1"},
+"Kab. Deiyai": {prov: "Papua", area: "Area 1"},
+"Kab. Dogiyai": {prov: "Papua", area: "Area 1"},
+"Kab. Intan Jaya": {prov: "Papua", area: "Area 1"},
+"Kab. Jayawijaya": {prov: "Papua", area: "Area 1"},
+"Kab. Lanny Jaya": {prov: "Papua", area: "Area 1"},
+"Kab. Mamberamo Raya": {prov: "Papua", area: "Area 1"},
+"Kab. Mamberamo Tengah": {prov: "Papua", area: "Area 1"},
+"Kab. Mappi": {prov: "Papua", area: "Area 1"},
+"Kab. Nabire": {prov: "Papua", area: "Area 1"},
+"Kab. Nduga": {prov: "Papua", area: "Area 1"},
+"Kab. Paniai": {prov: "Papua", area: "Area 1"},
+"Kab. Pegunungan Bintang": {prov: "Papua", area: "Area 1"},
+"Kab. Puncak": {prov: "Papua", area: "Area 1"},
+"Kab. Puncak Jaya": {prov: "Papua", area: "Area 1"},
+"Kab. Sarmi": {prov: "Papua", area: "Area 1"},
+"Kab. Supiori": {prov: "Papua", area: "Area 1"},
+"Kab. Tolikara": {prov: "Papua", area: "Area 1"},
+"Kab. Waropen": {prov: "Papua", area: "Area 1"},
+"Kab. Yahukimo": {prov: "Papua", area: "Area 1"},
+"Kab. Yalimo": {prov: "Papua", area: "Area 1"},
+
+// ================== PAPUA BARAT ==================
+"Kab. Teluk Bintuni": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Sorong Selatan": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Sorong": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Teluk Wondama": {prov: "Papua Barat", area: "Area 1"},
+"Kota Sorong": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Manokwari": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Fak Fak": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Kaimana": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Manokwari Selatan": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Maybrat": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Pegunungan Arfak": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Raja Ampat": {prov: "Papua Barat", area: "Area 1"},
+"Kab. Tambrauw": {prov: "Papua Barat", area: "Area 1"},
+    };
+
+    function cekArea() {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      if (!q) {
+        resultsDiv.textContent = "⚠️ Masukkan nama kabupaten/kota.";
+        return;
+      }
+
+      let found = 0;
+      for (const [nama, info] of Object.entries(areaMap)) {
+        if (nama.toLowerCase().includes(q)) {
+          resultsDiv.innerHTML += `
+            <div class="card">
+              <div class="nama">${nama}</div>
+              <div class="info">${info.prov} — ${info.area}</div>
+            </div>`;
+          found++;
+        }
+      }
+
+      if (found === 0) {
+        resultsDiv.innerHTML = `<div class="card"><div class="nama">❌ Tidak ditemukan</div><div class="info">"${q}"</div></div>`;
+      }
+    }
+  </script>
+</body>
+</html>
